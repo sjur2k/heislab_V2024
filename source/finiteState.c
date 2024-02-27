@@ -44,11 +44,6 @@ void remove_last_befor_stop(){
 
 
 void initialize(){
-    if(!elevio_init()){
-        printf("Elevator not working:(\n");
-        exit(1);
-    }
-
     clear_all_in_queue();
     clear_all_lights();
     update_current_floor();

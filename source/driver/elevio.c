@@ -67,7 +67,7 @@ void elevio_floorIndicator(int floor){
     assert(floor >= 0);
     assert(floor < N_FLOORS);
 
-    pthread_mutex_lock(&sockmtx);
+    pthread_mutex_losck(&sockmtx);
     send(sockfd, (char[4]){3, floor}, 4, 0);
     pthread_mutex_unlock(&sockmtx);
 }

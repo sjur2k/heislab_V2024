@@ -4,7 +4,7 @@
 
 #define BETWEEN_FLOORS = -1
 
-static int queue[N_FLOORS] = {0};
+static int queue[N_FLOORS] = {0,0,0,0};
 
 
 void add_order_queue(int floor, order_list order){
