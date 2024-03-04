@@ -5,150 +5,190 @@
 #include "Door.h"
 #include "finitestate.h"
 #include "queue.h"
+#include "Buttons.h"
+#include "timer.h"
+#include "lights.h"
 
 #define BETWEEN_FLOORS -1
 
 
-static MotorDirection current = DIRN_STOP;
-static MotorDirection last = DIRN_STOP;
-static MotorDirection lastBeforeStop = DIRN_STOP;
-
-static state_list next_s = IDLE;
-static action_state_list next_a = ENTRY;
 static int currentFloor = BETWEEN_FLOORS;
 static int previous_floor = BETWEEN_FLOORS;
 
-
-void update_current_floor(){
+void update_current_floor()
+{
     currentFloor = elevio_floorSensor();
 }
 
-void direction_elevator(MotorDirection direction){
-    elevio_motorDirection(direction);
-    if (direction != DIRN_STOP) last = direction;
-    current = direction;
-}
 
-void transition(action_state_list a, state_list s){
-    next_s = s;
-    next_a = a;
-}
-
-MotorDirection last_target_before_stop(){
-    return (lastBeforeStop != DIRN_STOP);
-}
-
-void remove_last_befor_stop(){
-    lastBeforeStop = DIRN_STOP;
-}
-
-
-void initialize(){
-    if(!elevio_init()){
-        printf("Elevator not working:(\n");
-        exit(1);
-    }
-
+void initialize()
+{
+    
     clear_all_in_queue();
     clear_all_lights();
     update_current_floor();
-    if (currentFloor==BETWEEN_FLOORS){ 
+    printf("currentfloor %d\n", currentFloor);
+    if(currentFloor == -1){
+        printf("currentfloor = -1\n");
         elevio_motorDirection(DIRN_DOWN);
     }
     while(currentFloor == -1){
-        printf("Init %d\n", currentFloor);
+        printf("Initializing%d\n", currentFloor);
         update_current_floor();
     }
-    direction_elevator(DIRN_STOP);
-    elevio_floorIndicator(currentFloor);
-    transition(IDLE, ENTRY);
-
+    elevio_motorDirection(DIRN_STOP);
+    current_state = IDLE;
 }
 
-state_list next_state(){
-    return next_s;
+state_type get_state()
+{
+    return current_state;
 }
 
-void state_drive(){
-    switch (next_a)
+
+void move_elevator(int floor){
+    printf("Move_elevator is going.");
+    elevio_floorIndicator(floor);
+    currentFloor = floor;
+    printf("Current floor: %d \n", currentFloor);
+    realFloor = currentFloor + motor_direction/2.0;
+
+    switch (current_state)
     {
-    case ENTRY:
-        if(currentFloor == -1 && current == DIRN_STOP){
-            if(!last_target_before_stop()) lastBeforeStop = last;
-            if(orders_over_queue(previous_floor)||(last_target_before_stop == DIRN_DOWN && get_order(previous_floor)!=NO_ORDER)){
-                direction_elevator(DIRN_UP);
+    case IDLE:
+        printf("IDLE");
+        break;
+    case GO:
+        printf("GO");
+        if(stop_queue(floor, motor_direction)){
+            current_state = STAY;
+        }
+        break;
+    case STAY:
+        printf("STAY");
+        motor_direction = DIRN_STOP;
+        elevio_motorDirection(DIRN_STOP);
+
+        if(!active_timer()){
+            set_timer();
+        }
+        open_door();
+        remove_order(floor);
+        clear_floor_light(currentFloor);
+
+        if(get_timer() > WAIT_TIME){
+            reset_timer();
+            close_door();
+
+            if(no_orders_left()){
+                current_state = IDLE;
             }
             else{
-                direction_elevator(DIRN_DOWN);
+                motor_direction = get_direction_from_order(currentFloor);
+                elevio_motorDirection(motor_direction);
+                current_state = GO;
             }
         }
-        else{
-            if(currentFloor ==0){
-                direction_elevator(DIRN_DOWN);
-            }
-            else if(currentFloor = N_FLOORS-1){
-                direction_elevator(DIRN_DOWN);
-            }
-            else if(last == DIRN_UP && !orders_over_queue(currentFloor)){
-                direction_elevator(DIRN_DOWN);
-            }
-            else if(last==DIRN_DOWN && !orders_under_queue(currentFloor)){
-                direction_elevator(DIRN_UP);
-            }
-            else if(last==DIRN_STOP &&orders_over_queue(currentFloor)){
-                direction_elevator(DIRN_UP);
-            }
-            else if(last == DIRN_STOP){
-                direction_elevator(DIRN_DOWN);
-            }
-            else{
-                direction_elevator(last);
-            }
-        }
-        transition(GO, INTERNAL);
-        
-    case INTERNAL:
-    update_current_floor();
-    if(currentFloor!=-1){
-        remove_last_befor_stop();
-        if(currentFloor!=previous_floor){
-            elevio_floorIndicator(currentFloor);
-            previous_floor = currentFloor;
-        }
-        if(stop_queue(currentFloor, current)){
-            transition(STAY, ENTRY);
-        }
-    }
-    break;
-    
-    default:
-    break;
+        break;
+
+    case EMERGENCY:
+        printf("EMERGENCY");
+        open_door();
+        while(elevio_stopButton()){};
+        elevio_stopLamp(OFF);
+        close_door();
+        current_state = STAY;
+        break;
+
     }
 }
 
-void go_up(int floor){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void go_up()
+{
     update_current_floor();
-    int start_floor=currentFloor;
-    int target = start_floor + floor;
+    int start_floor = currentFloor;
     elevio_motorDirection(DIRN_UP);
-    while(currentFloor!=target){
+    while (currentFloor == BETWEEN_FLOORS || currentFloor == start_floor)
+    {
         update_current_floor();
-        printf("%D\n", currentFloor);
     }
     elevio_motorDirection(DIRN_STOP);
-    
 }
 
-void go_down(int floor){
+void go_down()
+{
     update_current_floor();
-    int start_floor=currentFloor;
-    int target = start_floor - floor;
+    int start_floor = currentFloor;
     elevio_motorDirection(DIRN_DOWN);
-    while(currentFloor!=target){
+    while (currentFloor == BETWEEN_FLOORS || currentFloor == start_floor)
+    {
         update_current_floor();
-        printf("%D\n", currentFloor);
     }
     elevio_motorDirection(DIRN_STOP);
 }
 
-
+void cab()
+{
+    int list[N_FLOORS] = {-1, -1, -1, -1};
+    for (int i = 0; i < N_FLOORS; i++)
+    {
+        list[i] = get_queue(i);
+        if (list[i] != NO_ORDER)
+        {
+            update_current_floor();
+            int dir = i - currentFloor;
+            test_queue();
+            printf("Dir: %d \n", dir);
+            if (dir < 0)
+            {
+                for (int j = 0; j < abs(dir); j++)
+                {
+                    go_down();
+                }
+            }
+            if (dir > 0)
+            {
+                for (int k = 0; k < dir; k++)
+                {
+                    go_up();
+                }
+            }
+            remove_button(i, list[i]);
+            clear_queue_floor(i);
+            test_queue();
+        }
+    }
+}

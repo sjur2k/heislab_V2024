@@ -1,19 +1,22 @@
 #pragma once
+#include "stdbool.h"
+
+#define WAIT_TIME 4
+
+#define ON 1
+#define OFF 0
 
 
+typedef enum states{
+    IDLE = 0,
+    GO = 1,
+    STAY = 2,
+    EMERGENCY = 3
+} state_type;
 
-typedef enum states {
-    EMERGENCY,
-    IDLE,
-    GO,
-    STAY
-}state_list;
-
-typedef enum actions{
-    EXIT,
-    INTERNAL,
-    ENTRY
-} action_state_list;
+static state_type current_state;
+static int motor_direction;
+static double realFloor;
 
 
 void update_current_floor();
@@ -22,14 +25,19 @@ void initialize();
 
 void direction_elevator(MotorDirection direction);
 
-void transition(action_state_list a, state_list s);
 
-state_list next_state();
+
+state_type get_next_state();
 
 MotorDirection last_target_before_stop();
 
-void state_drive();
+void remove_last_before_stop();
 
-void go_up(int floor);
-void go_down(int floor);
+void state_drive();
+void state_idle();
+
+void go_up();
+void go_down();
+void cab();
+void move_elevator(int floor);
 

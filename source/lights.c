@@ -7,10 +7,8 @@ static int lights[N_FLOORS][N_BUTTONS] = {};
 void clear_floor_light(int floor){
     for(int button = 0; button<N_BUTTONS;button++){
         if(lights[floor][button]==1){
-            lights[floor][button]==0;
-            if(!(button == BUTTON_HALL_DOWN && floor == 0 ) && !(floor == N_FLOORS-1 && button == BUTTON_HALL_UP)){
-                elevio_buttonLamp(floor, button, 0);
-            }
+            lights[floor][button]==0;    
+            elevio_buttonLamp(floor, button, 0);
         }
     }
 }
