@@ -12,7 +12,7 @@
 
 
 
-
+//halla man!
 
 int main(){
     elevio_init();
@@ -34,10 +34,9 @@ int main(){
     while(1){
         
         int floor = elevio_floorSensor();
-        printf("Floor: %d\n", floor);
-        /*if(floor!=-1){
+        if(floor!=-1){
             move_elevator(floor);
-        }*/
+        }
         fetch_button(); //legger til knapper i button_ind matrisen
         update_queue_from_request(); //legger til bestillinger i køen queue ut i fra knappene som er trigget
         //update_lights_from_request();
