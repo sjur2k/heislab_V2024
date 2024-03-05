@@ -107,7 +107,7 @@ void next_state(state_type state){
 
 void fsm_ev_button(ButtonType button, int floor){
 	order_update(button, floor);
-	elevio_buttonLamp(button, floor, ON);
+	elevio_buttonLamp(floor, button, ON);
 	currentFloor = elevio_floorSensor();
 
 	switch (current_state){

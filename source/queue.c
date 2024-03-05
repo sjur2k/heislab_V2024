@@ -104,6 +104,7 @@ int get_queue(int floor){
 void test_queue(){
     show_queue();
     show_button_ind();
+    show_lights();
 }
 
 

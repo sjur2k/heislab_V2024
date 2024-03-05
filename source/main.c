@@ -20,17 +20,12 @@ int main(){
     test_queue();
     
 
-    //go_up(1);
-    //go_down(1);
+
 
     int cycle_num = 0;
     state_type previous_state = IDLE;
 
 
-    printf("=== Example Program ===\n");
-    printf("Press the stop button on the elevator panel to exit\n");
-
-    //elevio_motorDirection(DIRN_UP);
     while(1){
         
         int floor = elevio_floorSensor();
@@ -42,23 +37,10 @@ int main(){
         //update_lights_from_request();
         
     
-        
-        //int floor = elevio_floorSensor();
-        //printf("%d\n", floor);
-
-      /*  if(floor == 0){
-            elevio_motorDirection(DIRN_UP);
-        }
-
-        if(floor == N_FLOORS-1){
-            elevio_motorDirection(DIRN_DOWN);
-        }*/
+   
+    
         for(int f = 0; f<N_FLOORS; f++){
             for(ButtonType b = BUTTON_HALL_UP; b<=BUTTON_CAB; b++){
-                /*
-                 * The first if statement ensures that elements in the
-                 * button_channel_matirx not assosciated with a button are not accessed.
-                 */
                 if(!((f == 0 && b == BUTTON_HALL_DOWN)
                     ||(f == (N_FLOORS -1) && b == BUTTON_HALL_UP))){
 
@@ -71,31 +53,9 @@ int main(){
 
         //cab();
 
-       /* for(int f = 0; f < N_FLOORS; f++){
-            for(int b = 0; b < N_BUTTONS; b++){
-                int btnPressed = elevio_callButton(f, b);
-                //printf("%d\n", btnPressed);
-                elevio_buttonLamp(f, b, btnPressed);
-            }
-        }*/
-
-    /*
-        if(elevio_obstruction()){
-            elevio_stopLamp(1);
-        } else {
-            elevio_stopLamp(0);
-        }
-        */
-       /*switch (get_next_state())
-       {
-       case IDLE:
-        state_idle();
-       case GO:
-        state_drive();
-        break;
+        
        
        
-       }*/
         
         if(elevio_stopButton()){
             elevio_motorDirection(DIRN_STOP);
@@ -106,7 +66,7 @@ int main(){
     }
     
     test_queue();
-
+    
     return 0;
 }
 
