@@ -12,7 +12,7 @@
 
 
 
-//halla man!
+//halla man, hva skjera!
 
 int main(){
     elevio_init();
