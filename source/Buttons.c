@@ -45,6 +45,10 @@ void show_button_ind(){
     }
 }
 
+void set_button(ButtonType button, int floor){
+    button_ind[floor][button];
+}
+
 
 
 

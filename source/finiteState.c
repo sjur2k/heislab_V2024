@@ -23,13 +23,11 @@ void update_current_floor()
 
 void initialize()
 {
-    
     clear_all_in_queue();
     clear_all_lights();
     update_current_floor();
     printf("currentfloor %d\n", currentFloor);
-    if(currentFloor == -1){
-        printf("currentfloor = -1\n");
+    if(currentFloor == BETWEEN_FLOORS){
         elevio_motorDirection(DIRN_DOWN);
     }
     while(currentFloor == -1){
@@ -47,25 +45,23 @@ state_type get_state()
 
 
 void move_elevator(int floor){
-    printf("Move_elevator is going.");
     elevio_floorIndicator(floor);
     currentFloor = floor;
-    printf("Current floor: %d \n", currentFloor);
     realFloor = currentFloor + motor_direction/2.0;
 
     switch (current_state)
     {
     case IDLE:
-        printf("IDLE");
+        printf("IDLE\n");
         break;
     case GO:
-        printf("GO");
+        printf("GO\n");
         if(stop_queue(floor, motor_direction)){
             current_state = STAY;
         }
         break;
     case STAY:
-        printf("STAY");
+        printf("STAY\n");
         motor_direction = DIRN_STOP;
         elevio_motorDirection(DIRN_STOP);
 
@@ -103,9 +99,51 @@ void move_elevator(int floor){
     }
 }
 
+void next_state(state_type state){
+    current_state = state;
+}
 
 
 
+void fsm_ev_button(ButtonType button, int floor){
+	order_update(button, floor);
+	elevio_buttonLamp(button, floor, ON);
+	currentFloor = elevio_floorSensor();
+
+	switch (current_state){
+
+		case IDLE:
+			if(currentFloor == -1){
+				motor_direction = get_direction_from_order(realFloor);
+				elevio_motorDirection(motor_direction);
+				current_state = GO;	
+				break;
+			}
+
+			if(get_direction_from_order(currentFloor) == DIRN_STOP){
+				if(no_orders_left()){
+					current_state = IDLE;
+				}
+				else{
+					current_state = STAY;
+				}
+				break;
+			}else{
+				motor_direction = get_direction_from_order(currentFloor);
+				elevio_motorDirection(motor_direction);
+				current_state = GO;
+				realFloor = realFloor + motor_direction/2.0;
+				break;
+			}
+		case GO:
+			break;
+		case STAY:			
+			break;
+		case EMERGENCY:
+			break;
+		}
+
+}
 
 
 

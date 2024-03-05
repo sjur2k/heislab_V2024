@@ -191,3 +191,19 @@ MotorDirection get_direction_from_order(int floor){
     };
     return DIRN_STOP;
 }
+
+void order_update(ButtonType button, int floor) {
+	set_button(button, floor);
+
+	/* 
+	 * Add new order to queue 
+	 */
+	if (button == BUTTON_CAB) {
+		for (int i = 0; i < N_FLOORS; i++) {
+			if (queue[i] == floor || queue[i] == -1) {
+				queue[i] = floor;
+				break;
+			}
+		}
+	}
+}

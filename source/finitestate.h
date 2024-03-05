@@ -40,4 +40,5 @@ void go_up();
 void go_down();
 void cab();
 void move_elevator(int floor);
-
+void next_state(state_type state);
+void fsm_ev_button(ButtonType button, int floor);

@@ -8,4 +8,6 @@ void show_button_ind();
 
 void remove_all_buttons();
 
-void remove_button();
+void remove_button(int floor, int button);
+
+void set_button(ButtonType button, int floor);

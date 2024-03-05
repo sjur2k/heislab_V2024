@@ -15,7 +15,7 @@
 
 
 int main(){
-    //elevio_init();
+    elevio_init();
     initialize();
     test_queue();
     
@@ -26,6 +26,7 @@ int main(){
     int cycle_num = 0;
     state_type previous_state = IDLE;
 
+
     printf("=== Example Program ===\n");
     printf("Press the stop button on the elevator panel to exit\n");
 
@@ -34,7 +35,7 @@ int main(){
         
         int floor = elevio_floorSensor();
         printf("Floor: %d\n", floor);
-       /* if(floor!=-1){
+        /*if(floor!=-1){
             move_elevator(floor);
         }*/
         fetch_button(); //legger til knapper i button_ind matrisen
@@ -53,7 +54,21 @@ int main(){
         if(floor == N_FLOORS-1){
             elevio_motorDirection(DIRN_DOWN);
         }*/
+        for(int f = 0; f<N_FLOORS; f++){
+            for(ButtonType b = BUTTON_HALL_UP; b<=BUTTON_CAB; b++){
+                /*
+                 * The first if statement ensures that elements in the
+                 * button_channel_matirx not assosciated with a button are not accessed.
+                 */
+                if(!((f == 0 && b == BUTTON_HALL_DOWN)
+                    ||(f == (N_FLOORS -1) && b == BUTTON_HALL_UP))){
 
+                    if(elevio_callButton(f,b)){
+                        fsm_ev_button(b,f);
+                    }
+                }
+            }
+        }
 
         //cab();
 

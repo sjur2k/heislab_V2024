@@ -34,5 +34,6 @@ int get_queue(int floor);
 void remove_order(int floor);
 bool no_orders_left();
 MotorDirection get_direction_from_order(int floor);
+void order_update(ButtonType button, int floor);
 
 
