@@ -1,4 +1,6 @@
 #include "driver/elevio.h"
+#include <stdio.h>
+
 static int button_ind[N_FLOORS][N_BUTTONS] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
 
 
@@ -46,7 +48,7 @@ void show_button_ind(){
 }
 
 void set_button(ButtonType button, int floor){
-    button_ind[floor][button];
+    button_ind[floor][button]=1;
 }
 
 
