@@ -14,6 +14,8 @@
 
 //halla man, hva skjera!
 
+
+//hm
 int main(){
     elevio_init();
     initialize();
