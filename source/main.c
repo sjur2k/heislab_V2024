@@ -12,12 +12,11 @@
 
 
 
-//halla man, hva skjera!
-
 int main(){
     elevio_init();
     initialize();
     test_queue();
+    
     
 
     //go_up(1);
@@ -25,34 +24,17 @@ int main(){
 
     int cycle_num = 0;
     state_type previous_state = IDLE;
+    int floor;
 
-
-    printf("=== Example Program ===\n");
-    printf("Press the stop button on the elevator panel to exit\n");
-
-    //elevio_motorDirection(DIRN_UP);
     while(1){
         
-        int floor = elevio_floorSensor();
+        floor = elevio_floorSensor();
         if(floor!=-1){
-            move_elevator(floor);
+            initialize_elevator_state(floor);
         }
-        fetch_button(); //legger til knapper i button_ind matrisen
-        update_queue_from_request(); //legger til bestillinger i køen queue ut i fra knappene som er trigget
-        //update_lights_from_request();
-        
-    
-        
-        //int floor = elevio_floorSensor();
-        //printf("%d\n", floor);
+       
 
-      /*  if(floor == 0){
-            elevio_motorDirection(DIRN_UP);
-        }
 
-        if(floor == N_FLOORS-1){
-            elevio_motorDirection(DIRN_DOWN);
-        }*/
         for(int f = 0; f<N_FLOORS; f++){
             for(ButtonType b = BUTTON_HALL_UP; b<=BUTTON_CAB; b++){
                 /*
@@ -96,6 +78,12 @@ int main(){
        
        
        }*/
+
+       if(get_state() != previous_state){
+        printf("Current state: %d, Cycle number: %d \n", get_state(), cycle_num);
+        test_queue();
+       }
+       previous_state = get_state();
         
         if(elevio_stopButton()){
             elevio_motorDirection(DIRN_STOP);

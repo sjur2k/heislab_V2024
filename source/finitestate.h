@@ -27,7 +27,7 @@ void direction_elevator(MotorDirection direction);
 
 
 
-state_type get_next_state();
+state_type get_state();
 
 MotorDirection last_target_before_stop();
 
@@ -39,6 +39,6 @@ void state_idle();
 void go_up();
 void go_down();
 void cab();
-void move_elevator(int floor);
+void initialize_elevator_state(int floor);
 void next_state(state_type state);
 void fsm_ev_button(ButtonType button, int floor);

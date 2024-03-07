@@ -44,7 +44,7 @@ state_type get_state()
 }
 
 
-void move_elevator(int floor){
+void initialize_elevator_state(int floor){
     elevio_floorIndicator(floor);
     currentFloor = floor;
     realFloor = currentFloor + motor_direction/2.0;
@@ -52,16 +52,13 @@ void move_elevator(int floor){
     switch (current_state)
     {
     case IDLE:
-        printf("IDLE\n");
         break;
     case GO:
-        printf("GO\n");
         if(stop_queue(floor, motor_direction)){
             current_state = STAY;
         }
         break;
     case STAY:
-        printf("STAY\n");
         motor_direction = DIRN_STOP;
         elevio_motorDirection(DIRN_STOP);
 
@@ -107,7 +104,7 @@ void next_state(state_type state){
 
 void fsm_ev_button(ButtonType button, int floor){
 	order_update(button, floor);
-	elevio_buttonLamp(button, floor, ON);
+	elevio_buttonLamp(floor, button, ON);
 	currentFloor = elevio_floorSensor();
 
 	switch (current_state){
@@ -119,7 +116,6 @@ void fsm_ev_button(ButtonType button, int floor){
 				current_state = GO;	
 				break;
 			}
-
 			if(get_direction_from_order(currentFloor) == DIRN_STOP){
 				if(no_orders_left()){
 					current_state = IDLE;
@@ -225,7 +221,7 @@ void cab()
                 }
             }
             remove_button(i, list[i]);
-            clear_queue_floor(i);
+            //clear_queue_floor(i);
             test_queue();
         }
     }

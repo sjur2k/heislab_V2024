@@ -15,7 +15,7 @@ void fetch_button(){
 
 
 int get_button(ButtonType b, int floor){
-    return button_ind[b][floor];
+    return button_ind[floor][b];
 }
 
 void remove_all_buttons(){
@@ -46,7 +46,7 @@ void show_button_ind(){
 }
 
 void set_button(ButtonType button, int floor){
-    button_ind[floor][button];
+    button_ind[floor][button] = 1;
 }
 
 

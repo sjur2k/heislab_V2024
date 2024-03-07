@@ -6,54 +6,10 @@
 static int queue[N_FLOORS] = {-1,-1,-1,-1};
 
 
-void add_order_queue(int floor, order_list order){
-    order_list old_order = queue[floor];
-    if(order == NO_ORDER){ 
-        queue[floor] = NO_ORDER;
-    }
-    /*else if((old_order==ORDER_UP || old_order ==ORDER_DOWN) && old_order != order) {
-        queue[floor]=ORDER_ALL;
-    }*/
-    if(old_order!=ORDER_ALL) {
-        queue[floor] = order;
-    }
-}
-
-void clear_queue_floor(int floor){
-    add_order_queue(floor, NO_ORDER);
-}
-
 void clear_all_in_queue(){
-    for(int floor = 0; floor<N_FLOORS; floor++){
-        add_order_queue(floor, NO_ORDER);
+    for(int i = 0; i<N_FLOORS;i++){
+        queue[i] = NO_ORDER;
     }
-}
-
-void update_queue_from_request(){
-    for(int floor = 0; floor<N_FLOORS;floor++){
-        for(int b = 0; b<N_BUTTONS;b++){
-            if(get_button(floor, b)==1){
-                add_order_queue(floor, b);
-            }
-        }
-    }
-}
-
-int orders_over_queue(int floor){
-    for(int i =floor +1;i<N_FLOORS;i++){
-        if(queue[i] !=NO_ORDER){
-            return 1;
-        }
-    }
-    return 0;
-}
-int orders_under_queue(int floor){
-    for(int i = floor -1;i>=0;i--){
-        if(queue[i]!=NO_ORDER){
-            return 1;
-        }
-    }
-    return 0;
 }
 
 order_list get_order(int f){
@@ -64,28 +20,58 @@ order_list get_order(int f){
         return queue[f];
     }
 }
+bool queue_is_empty(){
+    for(int i = 0; i<N_FLOORS; i++){
+        if(queue[i] != -1){
+            return 0;
+        }
+    }
+    return 1;
+}
 
-int stop_queue(int floor, MotorDirection d){
-    order_list order = queue[floor];
-    if(floor ==BETWEEN_FLOORS) return 0;
-    else if(order == ORDER_ALL){
-        return 1;
+bool stop_queue(int floor, MotorDirection d){
+    
+    
+    for(int i = 0; i<N_FLOORS; i++){
+        if(queue[i] == floor){
+            return 1; //Hvis en av bestillingene i queue er den samme som etasjen så skal heisen stoppe
+        }
     }
-    else if(d==DIRN_UP&&order ==ORDER_UP){
-        return 1;
+
+    if(d == DIRN_DOWN && get_button(BUTTON_HALL_DOWN,floor)==1){
+        return 1;       //Hvis retningen på heisen går ned
+    }                   //og retningen i en  etasjen går ned så burde heisen stoppe
+    if(d == 1 && get_button(BUTTON_HALL_UP,floor) == 1){
+        return 1;       //hvis retningen på heisen går opp
+    }                   //og retningen i en etasje går opp burde heisen stoppe
+    if(queue_is_empty() && no_request_in_current_direction(d) && (get_button(BUTTON_HALL_UP,floor)==1
+    || get_button(BUTTON_HALL_DOWN,floor)==1)){         //hvis køen er tom og det er ingen bestillinger i en gitt retning
+        return 1;                                       //og enten git etasje har en bestilling opp eller ned, burde heisen stoppe
     }
-    else if(d == DIRN_DOWN && order ==ORDER_DOWN){
-        return 1;
+
+    if(((floor == 0) && (get_button(BUTTON_HALL_UP,0)==1||get_button(BUTTON_HALL_DOWN,0)==1))
+    ||((floor==3) && (get_button(BUTTON_HALL_UP,3)==1 || get_button(BUTTON_HALL_DOWN,3)==1))){
+        return 1;                           //hvis etasjen står i 0 og enten bestillingen er opp eller ned
+    }                                       //eller etasjen står i 3. og bestillingen er enten opp eller ned
+    return 0;                               //burde den stoppe
+    //ellers skal den bare kjøre
+}
+
+bool no_request_in_current_direction(MotorDirection direction){
+    int button;
+
+    if(direction == DIRN_DOWN){
+        button = BUTTON_HALL_DOWN; //hvis retningen er opp er butten lik opp
     }
-    else if(d==ORDER_UP && order == ORDER_DOWN){
-        return !orders_over_queue(floor);
+    if(direction == DIRN_UP){
+        button = BUTTON_HALL_UP; //hvis retningen er opp er button lik ned
     }
-    else if(d==DIRN_DOWN&&order==ORDER_UP){
-        return !orders_under_queue(floor);
+    for(int i = 0; i<N_FLOORS;i++){
+        if(get_button(button,i)==1){ //sjekker om noen av etasjene har bestilling ned eller opp, kommer an på direction
+            return 0;               //Hvis det stemmer vil den returnere 0
+        }
     }
-    else{
-        return 0;
-    }
+    return 1;
 }
 
 void show_queue(){
@@ -127,7 +113,8 @@ void order_clear_all() {
 
 void remove_order(int floor){
     for(int i = 0; i < N_BUTTONS; i++){
-        remove_button(floor, i); //Fjerner ordre for hver etasje
+        remove_button(floor,i);
+        elevio_buttonLamp(floor, i, 0);      //Fjerner ordre for hver etasje
     }
 
     //Skyv gjennværende ordre framover i køen

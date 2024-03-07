@@ -25,7 +25,7 @@ int queue_any_orders();
 
 order_list get_order(int f);
 
-int stop_queue(int floor, MotorDirection d);
+bool stop_queue(int floor, MotorDirection d);
 
 void show_queue();
 void test_queue();
@@ -35,5 +35,7 @@ void remove_order(int floor);
 bool no_orders_left();
 MotorDirection get_direction_from_order(int floor);
 void order_update(ButtonType button, int floor);
+bool queue_is_empty();
+bool no_request_in_current_direction(MotorDirection direction);
 
 
