@@ -102,9 +102,15 @@ void next_state(state_type state){
 
 
 
+<<<<<<< HEAD
 void button_sensor(ButtonType button, int floor){
 	order_update(button, floor);  //oppdaterer bestillingen i etasjen
 	elevio_buttonLamp(floor, button, ON); 
+=======
+void fsm_ev_button(ButtonType button, int floor){
+	order_update(button, floor);
+	elevio_buttonLamp(floor, button, ON);
+>>>>>>> origin/main
 	currentFloor = elevio_floorSensor();
 
 	switch (current_state){

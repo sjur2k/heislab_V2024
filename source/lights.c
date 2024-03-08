@@ -4,12 +4,14 @@
 
 static int lights[N_FLOORS][N_BUTTONS] = {};
 
+
+
 void clear_floor_light(int floor){
     for(int button = 0; button<N_BUTTONS;button++){
         if(lights[floor][button]==1){
-            lights[floor][button]==0;    
-            elevio_buttonLamp(floor, button, 0);
+            lights[floor][button]=0;    
         }
+        elevio_buttonLamp(floor, button, 0);
     }
 }
 
@@ -27,5 +29,20 @@ void update_lights_from_request(){
                 elevio_buttonLamp(b, f, 1);
             }
         }
+    }
+}
+int get_light(int floor, int button){
+    return lights[floor][button];
+}
+
+void show_lights(){
+    int matrise[N_FLOORS][N_BUTTONS] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
+    for (int i = 0; i < N_FLOORS; i++) {
+        printf("Etasje %d: ", i);
+        for (int j = 0; j < N_BUTTONS; j++) {
+            matrise[i][j] = get_light(i,j); 
+            printf("%d ", matrise[i][j]);
+        }
+        printf("\n");
     }
 }
