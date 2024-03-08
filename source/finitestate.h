@@ -1,7 +1,7 @@
 #pragma once
 #include "stdbool.h"
 
-#define WAIT_TIME 4
+#define WAIT_TIME 1  //SKAL ENDRES TIL 3 (?) for å bestå fat
 
 #define ON 1
 #define OFF 0
