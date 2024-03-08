@@ -61,7 +61,7 @@ void initialize_elevator_state(int floor){
     case STAY:
         motor_direction = DIRN_STOP;
         elevio_motorDirection(DIRN_STOP);
-
+        while(elevio_obstruction()){reset_timer();};
         if(!active_timer()){
             set_timer();
         }
@@ -82,6 +82,7 @@ void initialize_elevator_state(int floor){
                 current_state = GO;
             }
         }
+            
         break;
 
     case EMERGENCY:
@@ -141,6 +142,26 @@ void button_sensor(ButtonType button, int floor){
 
 }
 
+void emergency(int floor){
+    elevio_motorDirection(DIRN_STOP);
+    clear_all_in_queue();
+    clear_all_lights();
+    remove_all_buttons();
+    elevio_stopLamp(ON);
+    printf("EMERGENCY");
+    while(elevio_stopButton()){
+        if (floor != BETWEEN_FLOORS){
+            open_door();
+        }
+    };
+    elevio_stopLamp(OFF);
+    if (floor == BETWEEN_FLOORS){
+        current_state=IDLE;
+    }
+    else{
+        current_state=STAY;
+    }
+}
 
 
 

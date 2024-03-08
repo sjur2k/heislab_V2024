@@ -28,6 +28,10 @@ int main(){
         if(floor!=-1){
             initialize_elevator_state(floor);
         }
+
+        if(elevio_stopButton()){
+            emergency(floor);
+        }
        
 
         for(int f = 0; f<N_FLOORS; f++){
@@ -50,10 +54,11 @@ int main(){
        }
        previous_state = get_state();
         
-        if(elevio_stopButton()){
-            elevio_motorDirection(DIRN_STOP);
-            break;
-        }
+        // if(elevio_stopButton()){
+        //     elevio_motorDirection(DIRN_STOP);
+        //     clear_all_lights();
+        //     break;
+        // }
         cycle_num++;
         //nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
