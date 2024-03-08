@@ -57,15 +57,8 @@ void show_button_ind(){
 }
 
 void set_button(ButtonType button, int floor){
-<<<<<<< HEAD
-   
-    button_ind[floor][button] = 1;
-    
-=======
-    button_ind[floor][button]=1;
->>>>>>> origin/main
+    button_ind[floor][button] = 1;    
 }
-
 
 
 

@@ -28,7 +28,7 @@ void initialize()
     update_current_floor();
     printf("currentfloor %d\n", currentFloor);
     if(currentFloor == BETWEEN_FLOORS){
-        elevio_motorDirection(DIRN_DOWN);
+       elevio_motorDirection(DIRN_DOWN);
     }
     while(currentFloor == -1){
         printf("Initializing%d\n", currentFloor);
@@ -102,15 +102,9 @@ void next_state(state_type state){
 
 
 
-<<<<<<< HEAD
 void button_sensor(ButtonType button, int floor){
 	order_update(button, floor);  //oppdaterer bestillingen i etasjen
 	elevio_buttonLamp(floor, button, ON); 
-=======
-void fsm_ev_button(ButtonType button, int floor){
-	order_update(button, floor);
-	elevio_buttonLamp(floor, button, ON);
->>>>>>> origin/main
 	currentFloor = elevio_floorSensor();
 
 	switch (current_state){
