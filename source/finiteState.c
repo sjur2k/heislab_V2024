@@ -45,9 +45,9 @@ state_type get_state()
 
 
 void initialize_elevator_state(int floor){
-    elevio_floorIndicator(floor);
-    currentFloor = floor;
-    realFloor = currentFloor + motor_direction/2.0;
+    elevio_floorIndicator(floor); 
+    currentFloor = floor; 
+    realFloor = currentFloor + motor_direction/2.0; 
 
     switch (current_state)
     {
@@ -102,30 +102,30 @@ void next_state(state_type state){
 
 
 
-void fsm_ev_button(ButtonType button, int floor){
-	order_update(button, floor);
-	elevio_buttonLamp(floor, button, ON);
+void button_sensor(ButtonType button, int floor){
+	order_update(button, floor);  //oppdaterer bestillingen i etasjen
+	elevio_buttonLamp(floor, button, ON); 
 	currentFloor = elevio_floorSensor();
 
 	switch (current_state){
 
 		case IDLE:
 			if(currentFloor == -1){
-				motor_direction = get_direction_from_order(realFloor);
-				elevio_motorDirection(motor_direction);
-				current_state = GO;	
+				motor_direction = get_direction_from_order(realFloor);  //hvis heisen står mellom etasjer
+				elevio_motorDirection(motor_direction);                 //vil vi at heisen fortsetter i samme retning
+				current_state = GO;	                                    //og currentstate = go
 				break;
 			}
-			if(get_direction_from_order(currentFloor) == DIRN_STOP){
-				if(no_orders_left()){
+			if(get_direction_from_order(currentFloor) == DIRN_STOP){  //hvis en ordre sier har ingen retining
+				if(no_orders_left()){                                 //hvis ingen ordre er i køen gå til idle
 					current_state = IDLE;
 				}
-				else{
+				else{                                               //ellers stay
 					current_state = STAY;
 				}
 				break;
 			}else{
-				motor_direction = get_direction_from_order(currentFloor);
+				motor_direction = get_direction_from_order(currentFloor); //ellers kjører heis i samme retning
 				elevio_motorDirection(motor_direction);
 				current_state = GO;
 				realFloor = realFloor + motor_direction/2.0;

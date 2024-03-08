@@ -2,6 +2,7 @@
 static int button_ind[N_FLOORS][N_BUTTONS] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
 
 
+
 void fetch_button(){
     for (int floor = 0; floor< N_FLOORS; floor++){
         for(int button = 0; button<N_BUTTONS;button++){
@@ -35,9 +36,17 @@ void remove_button(int floor, int button){
 
 void show_button_ind(){
     int matrise[N_FLOORS][N_BUTTONS] = {{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
-    for (int i = 0; i < N_FLOORS; i++) {
-        printf("Etasje %d: ", i);
-        for (int j = 0; j < N_BUTTONS; j++) {
+    for (int i = 0; i < N_BUTTONS; i++) {
+        if(i ==0){
+            printf("BUTTON_HALL_UP: ");
+        }
+        if(i==1){
+            printf("BUTTON_HALL_DOWN: ");
+        }
+        if(i==2){
+            printf("BUTTON_CAB: ");
+        }
+        for (int j = 0; j < N_FLOORS; j++) {
             matrise[i][j] = get_button(i,j); 
             printf("%d ", matrise[i][j]);
         }
@@ -46,7 +55,9 @@ void show_button_ind(){
 }
 
 void set_button(ButtonType button, int floor){
+   
     button_ind[floor][button] = 1;
+    
 }
 
 

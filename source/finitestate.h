@@ -41,4 +41,5 @@ void go_down();
 void cab();
 void initialize_elevator_state(int floor);
 void next_state(state_type state);
-void fsm_ev_button(ButtonType button, int floor);
+void button_sensor(ButtonType button, int floor);
+

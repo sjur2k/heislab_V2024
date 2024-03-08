@@ -34,14 +34,14 @@ bool stop_queue(int floor, MotorDirection d){
     
     for(int i = 0; i<N_FLOORS; i++){
         if(queue[i] == floor){
-            return 1; //Hvis en av bestillingene i queue er den samme som etasjen så skal heisen stoppe
+            return 1; //Hvis en av bestillingene i queue er den samme som etasjen så burde heisen stoppe
         }
     }
 
     if(d == DIRN_DOWN && get_button(BUTTON_HALL_DOWN,floor)==1){
         return 1;       //Hvis retningen på heisen går ned
     }                   //og retningen i en  etasjen går ned så burde heisen stoppe
-    if(d == 1 && get_button(BUTTON_HALL_UP,floor) == 1){
+    if(d == DIRN_UP && get_button(BUTTON_HALL_UP,floor) == 1){
         return 1;       //hvis retningen på heisen går opp
     }                   //og retningen i en etasje går opp burde heisen stoppe
     if(queue_is_empty() && no_request_in_current_direction(d) && (get_button(BUTTON_HALL_UP,floor)==1
@@ -51,7 +51,7 @@ bool stop_queue(int floor, MotorDirection d){
 
     if(((floor == 0) && (get_button(BUTTON_HALL_UP,0)==1||get_button(BUTTON_HALL_DOWN,0)==1))
     ||((floor==3) && (get_button(BUTTON_HALL_UP,3)==1 || get_button(BUTTON_HALL_DOWN,3)==1))){
-        return 1;                           //hvis etasjen står i 0 og enten bestillingen er opp eller ned
+        return 1;                           //hvis etasjen står i 0 og estillingen er enten opp eller ned
     }                                       //eller etasjen står i 3. og bestillingen er enten opp eller ned
     return 0;                               //burde den stoppe
     //ellers skal den bare kjøre
@@ -180,15 +180,15 @@ MotorDirection get_direction_from_order(int floor){
 }
 
 void order_update(ButtonType button, int floor) {
-	set_button(button, floor);
+	set_button(button, floor); //setter en inn 1 matrisen
 
 	/* 
 	 * Add new order to queue 
 	 */
 	if (button == BUTTON_CAB) {
 		for (int i = 0; i < N_FLOORS; i++) {
-			if (queue[i] == floor || queue[i] == -1) {
-				queue[i] = floor;
+			if (queue[i] == floor || queue[i] == -1) { //hvis elementet i køen er lik etasjen eller har ingen bestilling 
+				queue[i] = floor;                       // vil elementet bli oppdatert.
 				break;
 			}
 		}

@@ -19,9 +19,6 @@ int main(){
     
     
 
-    //go_up(1);
-    //go_down(1);
-
     int cycle_num = 0;
     state_type previous_state = IDLE;
     int floor;
@@ -37,15 +34,11 @@ int main(){
 
         for(int f = 0; f<N_FLOORS; f++){
             for(ButtonType b = BUTTON_HALL_UP; b<=BUTTON_CAB; b++){
-                /*
-                 * The first if statement ensures that elements in the
-                 * button_channel_matirx not assosciated with a button are not accessed.
-                 */
-                if(!((f == 0 && b == BUTTON_HALL_DOWN)
-                    ||(f == (N_FLOORS -1) && b == BUTTON_HALL_UP))){
+                
+                if(!((f == 0 && b == BUTTON_HALL_DOWN)||(f == (N_FLOORS -1) && b == BUTTON_HALL_UP))){
 
                     if(elevio_callButton(f,b)){
-                        fsm_ev_button(b,f);
+                        button_sensor(b,f);
                     }
                 }
             }
@@ -82,6 +75,7 @@ int main(){
        if(get_state() != previous_state){
         printf("Current state: %d, Cycle number: %d \n", get_state(), cycle_num);
         test_queue();
+        printf("Current floor: %d \n", floor);
        }
        previous_state = get_state();
         
