@@ -90,9 +90,7 @@ int get_queue(int floor){
 void test_queue(){
     show_queue();
     show_button_ind();
-    show_lights();
-}
-
+} 
 
 int queue_any_orders(){
     for(int f = 0; f<N_FLOORS;f++){
@@ -163,12 +161,12 @@ MotorDirection get_direction_from_order(int floor){
     int requestUp = 0;
     int requestDown = 0;
     for(int i = 0; i<floor;i++){
-        requestDown += get_button(i,1);
-        requestDown +=get_button(i,0);
+        requestDown += get_button(1,i);
+        requestDown +=get_button(0,i);
     }
     for(int f = floor +1; f<N_FLOORS;f++){
-        requestUp += get_button(f,1);
-        requestUp +=get_button(f,0);
+        requestUp += get_button(1,f);
+        requestUp +=get_button(0,f);
     }
 
     if(requestUp>=requestDown && requestUp != 0){
